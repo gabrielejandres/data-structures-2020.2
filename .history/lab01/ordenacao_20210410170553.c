@@ -176,6 +176,7 @@ int main(int argc, char *argv[ ]){
     }
   }
 
+  int i;
   // imprime o vetor ordenado
   for(int i = 0; i < pos; i++) {
     printf("%d\n", vet[i]);
