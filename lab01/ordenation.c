@@ -9,58 +9,58 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TAM 8
+#define SIZE 8
 
 /* Aumenta o tamanho alocado para o vetor, quando necessário */
-void overflow(int *vet[], int *tam) {
+void overflow(int *vet[], int *size) {
   int *tmp;
-  tmp = (int *) malloc(2 * sizeof(int) * (*tam));
+  tmp = (int *) malloc(2 * sizeof(int) * (*size));
 
   if(!tmp){
     printf("Erro ao alocar memoria. \n");
     exit(1);
   }
 
-  for(int i = 0; i < (*tam); i++) {
+  for(int i = 0; i < (*size); i++) {
     tmp[i] = (*vet)[i];
   }
 
-  (*tam) = (*tam) * 2;
+  (*size) = (*size) * 2;
   free((*vet));
   (*vet) = tmp;
 }
 
 /* Troca duas posições no vetor */
-void troca(int vet[], int i, int j) {
+void swap(int vet[], int i, int j) {
   int tmp = vet[i];
   vet[i] = vet[j];
   vet[j] = tmp; 
 }
 
 /* Ordenação quadrática */
-void selectionSort(int vet[], int tam) {
-  for(int i = 0; i < tam - 1; i++) {
-    for(int j = i + 1; j < tam; j++) {
+void selectionSort(int vet[], int size) {
+  for(int i = 0; i < size - 1; i++) {
+    for(int j = i + 1; j < size; j++) {
       if(vet[i] > vet[j]) {
-        troca(vet, i, j);
+        swap(vet, i, j);
       }
     }
   }
 }
 
 /* Função auxiliar à ordenação Merge Sort para juntar dois "conjuntos" */
-void merge(int vet[], int inicio, int meio, int fim) {
-  int i, j, pos, tam;
+void merge(int vet[], int first, int middle, int last) {
+  int i, j, pos, size;
   int *tmp;
 
-  i = inicio;
-  j = meio;
+  i = first;
+  j = middle;
   pos = 0;
-  tam = fim - inicio;
+  size = last - first;
 
-  tmp = (int *) malloc(sizeof(int) * tam);
+  tmp = (int *) malloc(sizeof(int) * size);
 
-  while(i < meio && j < fim) {
+  while(i < middle && j < last) {
     if (vet[i] <= vet[j]){
       tmp[pos++] = vet[i++];
     } 
@@ -70,82 +70,82 @@ void merge(int vet[], int inicio, int meio, int fim) {
   }
 
   // caso ainda haja elementos na primeira metade
-  while (i < meio) {
+  while (i < middle) {
     tmp[pos++] = vet[i++];
   }
 
   // caso ainda haja elementos na segunda metade
-  while (j < fim) {
+  while (j < last) {
     tmp[pos++] = vet[j++];
   }
 
   // os elementos vão de volta para o vetor original
-  for(pos = 0; pos < tam; pos++) {
-    vet[inicio + pos] = tmp[pos];
+  for(pos = 0; pos < size; pos++) {
+    vet[first + pos] = tmp[pos];
   }
   
   free(tmp);
 }
 
 /* Algoritmo de ordenação Merge Sort */
-void mergeSort(int vet[], int inicio, int fim) {
-  int meio;
+void mergeSort(int vet[], int first, int last) {
+  int middle;
 
-  if(fim - inicio > 1) {
-    meio = (inicio + fim)/2;
-    mergeSort(vet, inicio, meio);
-    mergeSort(vet, meio, fim);
-    merge(vet, inicio, meio, fim);
+  if(last - first > 1) {
+    middle = (first + last)/2;
+    mergeSort(vet, first, middle);
+    mergeSort(vet, middle, last);
+    merge(vet, first, middle, last);
   } 
 }
 
 /* Função auxiliar à ordenação Quick Sort para posicionar todos elementos menores do que o pivô à sua esquerda */
-int particiona(int vet[], int inicio, int fim){
+int partition(int vet[], int first, int last){
   int i, j, pivot;
-  i = inicio;
-  j = fim - 1;
-  pivot = vet[inicio];
+  i = first;
+  j = last - 1;
+  pivot = vet[first];
 
   while (i < j) {
-    while (i < fim && vet[i] <= pivot) {
+    while (i < last && vet[i] <= pivot) {
       i++;
     }
-    while (j > inicio && vet[j] > pivot) {
+    while (j > first && vet[j] > pivot) {
       j--;
     }
     if (i < j) {
-      troca(vet, i, j);
+      swap(vet, i, j);
     }
   }
 
-  vet[inicio] = vet[j];
+  vet[first] = vet[j];
   vet[j] = pivot;
   return j;
 }
 
 /* Algoritmo de ordenação Quick Sort */
-void quickSort(int vet[], int inicio, int fim) {
+void quickSort(int vet[], int first, int last) {
   int pivot; 
 
-  if (fim - inicio < 1) {
+  if (last - first < 1) {
     return;
   }
 
-  pivot = particiona(vet, inicio, fim);
+  pivot = partition(vet, first, last);
 
-  quickSort(vet, inicio, pivot);
-  quickSort(vet, pivot + 1, fim);
+  quickSort(vet, first, pivot);
+  quickSort(vet, pivot + 1, last);
 }
 
 /* Função principal */
 int main(int argc, char *argv[ ]){
-  int tam = TAM;
+  int size = SIZE;
   int *vet;
   int num;
   int pos = 0;
 
   // alocação do tamanho inicial do vetor
-  vet = (int *) malloc(sizeof(int) * tam);
+  vet = (int *) malloc(sizeof(int) * size);
 
   if(!vet){
     printf("Erro ao alocar memoria. \n");
@@ -154,8 +154,8 @@ int main(int argc, char *argv[ ]){
 
   // leitura dos valores da entrada para armazenar no vetor
   while(scanf("%d", &num) == 1) {
-    if(pos + 1 == tam) {
-      overflow(&vet, &tam);
+    if(pos + 1 == size) {
+      overflow(&vet, &size);
     }
     vet[pos++] = num;
   } 
